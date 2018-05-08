@@ -1,0 +1,3 @@
+rootProject.name = 'junket'
+
+include ':app'
