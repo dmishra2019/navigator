@@ -49,7 +49,7 @@ export default class VenueCard extends React.Component {
                 <View style={{ alignSelf: 'stretch', flexDirection: 'row' }}>
                     <Image style={styles.image} source={{ uri: this.getVenueThumbnailURL() }}></Image>
                     <View style={{ flex: 1, marginLeft: 7, marginRight: 7 }}>
-                        <Text style={styles.title} ellipsizeMode='tail' numberOfLines={1}>{venue.name}</Text>
+                        <Text style={styles.title} ellipsizeMode='tail' numberOfLines={1}>{(this.props.position + 1) + '. ' + venue.name}</Text>
                         <Text style={styles.contact} ellipsizeMode='tail' numberOfLines={1}>{this.getContact()}</Text>
                         <Text style={styles.address} ellipsizeMode='tail' numberOfLines={3}>{this.getFullAddress()}</Text>
                     </View>
