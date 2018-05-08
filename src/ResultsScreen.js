@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, FlatList, View, ActivityIndicator, Alert } from 'react-native';
+import { FlatList, View, ActivityIndicator } from 'react-native';
 import Constants from './Constants'
 import Utils from './util/Utils'
 import VenueCard from './component/VenueCard'
@@ -11,8 +11,7 @@ const DEFAULT_QUERY_MAP = { client_id: 'CM21KZD4QJRUVTSIVPJISFUQSV0FHBKG3TZRLH4M
 export default class ResultsScreen extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { isLoading: true, items: [] }
-
+        this.state = { isLoading: true, dataSource: [], }
     }
     static navigationOptions = {
         title: 'Near You!',
@@ -33,12 +32,10 @@ export default class ResultsScreen extends React.Component {
         return fetch(URL)
             .then((response) => response.json())
             .then((responseJson) => {
-
                 if (responseJson.response.totalResults > 0) {
-                    venues = responseJson.response.groups[0]['items'];
                     this.setState({
                         isLoading: false,
-                        items: responseJson.response.groups[0]['items'],
+                        dataSource: responseJson.response.groups[0].items,
                     }, function () {
                         //callback for setState() because its not executed immediately, called when setState() completed
                     });
@@ -49,7 +46,12 @@ export default class ResultsScreen extends React.Component {
 
             })
             .catch((error) => {
-                Alert.alert(error);
+                this.setState({
+                    isLoading: false,
+                    error: error,
+                }, function () {
+                    //callback for setState() because its not executed immediately, called when setState() completed
+                });
             });
     }
 
@@ -61,17 +63,15 @@ export default class ResultsScreen extends React.Component {
         return (
             <View
                 style={{
-                    height: 10, backgroundColor: '#FF0000'
+                    height: 10
                 }}
             />
         );
     };
-    renderRow = ({ item, index }) => {
-        return <Text>{JSON.stringify(item.tips[0])}</Text>
-        // return <Text>{JSON.stringify(item.tips[0].text)}</Text>
-        // return <VenueCard venue={item.venue} tip={null} />
-        // return <VenueCard venue={item['venue']} tip={item['tips'][0]} />;
+    renderRow = ({ item }) => {
+        return <VenueCard venue={item.venue} tips={item.tips} />
     }
+
     render() {
 
         if (this.state.isLoading) {
@@ -84,12 +84,11 @@ export default class ResultsScreen extends React.Component {
 
         return (
             <View style={{
-                margin: 15
+                margin: 10
             }}>
-
                 <FlatList
 
-                    data={this.state.items}
+                    data={this.state.dataSource}
 
                     ItemSeparatorComponent={this.renderSeparator}
 

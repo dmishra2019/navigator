@@ -7,7 +7,7 @@ export default class VenueCard extends React.Component {
     }
     getVenueThumbnailURL() {
         if (this.props.venue.photos.count == 0) {
-            return null;
+            return "http://"; //fake url
         }
         let photo = this.props.venue.photos.groups[0]['items'][0];
         let venueURL = photo.prefix + '100x100' + photo.suffix;
@@ -25,14 +25,24 @@ export default class VenueCard extends React.Component {
         return address;
     }
     getContact() {
-        if (!venue.contact) {
-            return 'N/A';
+        let no_contact = 'No Contact';
+        let venue = this.props.venue;
+        let contact = !venue.contact.formattedPhone ? venue.contact.phone : venue.contact.formattedPhone;
+        return !contact ? no_contact : contact;
+    }
+    getRatingColor() {
+        let venue = this.props.venue;
+        if (!venue.ratingColor) {
+            return 'red';
         }
-        return !venue.contact.formattedPhone ? venue.contact.phone : venue.contact.formattedPhone;
+        return venue.ratingColor.startsWith('#') ? venue.ratingColor : '#' + venue.ratingColor;
     }
     render() {
         let venue = this.props.venue;
-        let tip = this.props.tip;
+        const mockTip = {
+            text: 'Junket: There are no reviews for this place.'
+        }
+        let tip = this.props.tips && this.props.tips.length > 0 ? this.props.tips[0] : mockTip;
 
         return (
             <View style={styles.card}>
@@ -43,9 +53,9 @@ export default class VenueCard extends React.Component {
                         <Text style={styles.contact} ellipsizeMode='tail' numberOfLines={1}>{this.getContact()}</Text>
                         <Text style={styles.address} ellipsizeMode='tail' numberOfLines={3}>{this.getFullAddress()}</Text>
                     </View>
-                    <Text style={[styles.rating, { backgroundColor: venue.ratingColor.startsWith('#') ? venue.ratingColor : '#' + venue.ratingColor }]} ellipsizeMode='tail' numberOfLines={1}>{venue.rating}</Text>
+                    <Text style={[styles.rating, { backgroundColor: this.getRatingColor() }]} ellipsizeMode='tail' numberOfLines={1}>{!venue.rating ? '0' : venue.rating}</Text>
                 </View>
-                <Text style={styles.tip} ellipsizeMode='tail' numberOfLines={2}>{'TIP: ' + tip.text}</Text>
+                <Text style={styles.tip} ellipsizeMode='tail' numberOfLines={2}>{(!tip) ? ' ' : 'TIP: ' + tip.text}</Text>
             </View >
         );
     }
