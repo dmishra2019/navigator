@@ -49,6 +49,7 @@ export default class ResultsScreen extends React.Component {
                 if (responseJson.response.totalResults > 0) {
                     this.setState({
                         isLoading: false,
+                        isRefreshing: false,
                         dataSource: [...this.state.dataSource, ...responseJson.response.groups[0].items],
                         error: null,
                     }, function () {
@@ -107,6 +108,12 @@ export default class ResultsScreen extends React.Component {
             this.loadVenues();
         })
     }
+    handleRefresh = () => {
+        this.setState({ offset: 0, isRefreshing: true, dataSource: [] }, () => {
+            this.loadVenues();
+        })
+    }
+
     render() {
 
         return (
@@ -128,6 +135,10 @@ export default class ResultsScreen extends React.Component {
                 onEndReached={this.handleLoadMore}
 
                 onEndReachedThreshold={0}
+
+                refreshing={this.state.isRefreshing}
+
+                onRefresh={this.handleRefresh}
             />
         );
     }
