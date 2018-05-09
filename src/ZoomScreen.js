@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, Dimensions, Image } from 'react-native';
+import { StyleSheet, Dimensions, Image, Easing } from 'react-native';
+import ZoomImage from 'react-native-zoom-image';
 
 export default class ZoomScreen extends React.Component {
 
@@ -16,7 +17,15 @@ export default class ZoomScreen extends React.Component {
     render() {
         const { state } = this.props.navigation;
         return (
-            <Image style={styles.image} source={{ uri: state.params.image }} />
+            // <Image style={styles.image} source={{ uri: state.params.image }} />
+            <ZoomImage
+                source={{ uri: state.params.image }}
+                imgStyle={styles.image}
+                style={styles.image}
+                duration={200}
+                enableScaling={true}
+                easingFunc={Easing.ease}
+            />
         )
     }
 }
