@@ -54,9 +54,9 @@ export default class VenueCard extends React.Component {
         if (venue.photos.count == 0) {
             return;
         }
-        let dim = Dimensions.get('screen')
+        let dim = Dimensions.get('window')
         let photo = venue.photos.groups[0]['items'][0];
-        let url = photo.prefix + dim.width + 'x' + dim.height + photo.suffix;
+        let url = photo.prefix + Math.round(dim.width) + 'x' + Math.round(dim.height) + photo.suffix;
         this.props.navigation.navigate('Zoom', { title: venue.name, image: url });
     }
     render() {

@@ -1,6 +1,5 @@
 import React from 'react';
-import { Text, Modal } from 'react-native';
-import SingleImageZoomViewer from 'react-native-single-image-zoom-viewer'
+import { StyleSheet, Dimensions, Image } from 'react-native';
 
 export default class ZoomScreen extends React.Component {
 
@@ -17,8 +16,13 @@ export default class ZoomScreen extends React.Component {
     render() {
         const { state } = this.props.navigation;
         return (
-            // <Text>{state.params.image}</Text>
-            <SingleImageZoomViewer source={{ uri: state.params.image }} />
+            <Image style={styles.image} source={{ uri: state.params.image }} />
         )
     }
 }
+const styles = StyleSheet.create({
+    image: {
+        width: Math.round(Dimensions.get('window').width),
+        height: Math.round(Dimensions.get('window').height)
+    }
+});
