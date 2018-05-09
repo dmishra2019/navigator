@@ -1,13 +1,16 @@
 import React from 'react';
-import { Text, View, StyleSheet, Image, Alert } from 'react-native';
+import { Dimensions, Text, View, StyleSheet, Image, Alert, Linking, TouchableOpacity } from 'react-native';
+import call from 'react-native-phone-call'
 
+const no_contact = 'No Contact';
+const fake_url = "http://"
 export default class VenueCard extends React.Component {
     constructor(props) {
         super(props)
     }
     getVenueThumbnailURL() {
         if (this.props.venue.photos.count == 0) {
-            return "http://"; //fake url
+            return fake_url;
         }
         let photo = this.props.venue.photos.groups[0]['items'][0];
         let venueURL = photo.prefix + '100x100' + photo.suffix;
@@ -25,7 +28,6 @@ export default class VenueCard extends React.Component {
         return address;
     }
     getContact() {
-        let no_contact = 'No Contact';
         let venue = this.props.venue;
         let contact = !venue.contact.formattedPhone ? venue.contact.phone : venue.contact.formattedPhone;
         return !contact ? no_contact : contact;
@@ -37,6 +39,26 @@ export default class VenueCard extends React.Component {
         }
         return venue.ratingColor.startsWith('#') ? venue.ratingColor : '#' + venue.ratingColor;
     }
+    callNumber = (number) => {
+        if (number === no_contact) {
+            return;
+        }
+        const args = {
+            number: number,
+            prompt: true // Determines if the user should be prompt prior to the call 
+        }
+
+        call(args).catch(err => Alert.alert('An error occurred', err))
+    }
+    openBigImage(venue) {
+        if (venue.photos.count == 0) {
+            return;
+        }
+        let dim = Dimensions.get('screen')
+        let photo = venue.photos.groups[0]['items'][0];
+        let url = photo.prefix + dim.width + 'x' + dim.height + photo.suffix;
+        this.props.navigation.navigate('Zoom', { title: venue.name, image: url });
+    }
     render() {
         let venue = this.props.venue;
         const mockTip = {
@@ -47,10 +69,12 @@ export default class VenueCard extends React.Component {
         return (
             <View style={styles.card}>
                 <View style={{ alignSelf: 'stretch', flexDirection: 'row' }}>
-                    <Image style={styles.image} source={{ uri: this.getVenueThumbnailURL() }}></Image>
+                    <TouchableOpacity activeOpacity={.5} onPress={() => this.openBigImage(this.props.venue)}>
+                        <Image style={styles.image} source={{ uri: this.getVenueThumbnailURL() }}></Image>
+                    </TouchableOpacity>
                     <View style={{ flex: 1, marginLeft: 7, marginRight: 7 }}>
                         <Text style={styles.title} ellipsizeMode='tail' numberOfLines={1}>{(this.props.position + 1) + '. ' + venue.name}</Text>
-                        <Text style={styles.contact} ellipsizeMode='tail' numberOfLines={1}>{this.getContact()}</Text>
+                        <Text style={styles.contact} ellipsizeMode='tail' numberOfLines={1} onPress={() => this.callNumber(this.getContact())}>{this.getContact()}</Text>
                         <Text style={styles.address} ellipsizeMode='tail' numberOfLines={3}>{this.getFullAddress()}</Text>
                     </View>
                     <Text style={[styles.rating, { backgroundColor: this.getRatingColor() }]} ellipsizeMode='tail' numberOfLines={1}>{!venue.rating ? '0' : venue.rating}</Text>

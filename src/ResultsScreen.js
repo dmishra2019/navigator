@@ -22,7 +22,7 @@ export default class ResultsScreen extends React.Component {
         }
     }
     static navigationOptions = {
-        title: 'Near You!',
+        title: 'Home',
         headerStyle: {
             backgroundColor: Constants.COLOR.PINK_DARK,
         },
@@ -86,7 +86,7 @@ export default class ResultsScreen extends React.Component {
         );
     };
     renderRow = ({ item, index }) => {
-        return <VenueCard position={index} venue={item.venue} tips={item.tips} />
+        return <VenueCard position={index} venue={item.venue} tips={item.tips} navigation={this.props.navigation} />
     }
     renderFooter = () => {
         if (!this.state.isLoading) return null;
@@ -134,7 +134,7 @@ export default class ResultsScreen extends React.Component {
 
                 onEndReached={this.handleLoadMore}
 
-                onEndReachedThreshold={0}
+                onEndReachedThreshold={0.1}
 
                 refreshing={this.state.isRefreshing}
 
