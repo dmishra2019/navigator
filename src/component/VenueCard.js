@@ -48,7 +48,7 @@ export default class VenueCard extends React.Component {
             prompt: true // Determines if the user should be prompt prior to the call 
         }
 
-        call(args).catch(err => Alert.alert('An error occurred', err))
+        call(args).catch(err => Alert.alert('An error occurred', 'Calling service unavailable.'))
     }
     openBigImage(venue) {
         if (venue.photos.count == 0) {

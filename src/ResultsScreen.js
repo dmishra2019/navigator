@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, TouchableOpacity, FlatList, View, ActivityIndicator, Alert } from 'react-native';
+import { Image, TouchableOpacity, FlatList, View, ActivityIndicator, Alert, Text, Button } from 'react-native';
 import Constants from './Constants'
 import Utils from './util/Utils'
 import VenueCard from './component/VenueCard'
@@ -25,9 +25,11 @@ export default class ResultsScreen extends React.Component {
             dataSource: [],
             isRefreshing: false,
             offset: 0,
-            searchStr: 'restaurants',
-            latlng: '26.8467,80.9462',
+            searchStr: '',
+            latlng: '',
             radius: 10000,//in meters
+            waitingForLocation: true,
+            error: null,
         }
     }
     static navigationOptions = ({ navigation }) => {
@@ -44,7 +46,29 @@ export default class ResultsScreen extends React.Component {
 
     componentDidMount() {
         this.props.navigation.setParams({ handleSettingsClick: this.onSettingsClick.bind(this) });
+        navigator.geolocation.getCurrentPosition(
+            (position) => this.onLocationAvailable(position),
+            (error) => this.onLocationError(error),
+            { enableHighAccuracy: true, timeout: 20000, maximumAge: 10000 },
+        );
+    }
+    findLocation() {
+        this.setState({ waitingForLocation: true, error: null }, () => {
+            navigator.geolocation.getCurrentPosition(
+                (position) => this.onLocationAvailable(position),
+                (error) => this.onLocationError(error),
+                { enableHighAccuracy: true, timeout: 20000, maximumAge: 10000 },
+            );
+
+        });
+    }
+    onLocationAvailable(position) {
+        let loc = position.coords.latitude + "," + position.coords.longitude;
+        this.setState({ latlng: loc, waitingForLocation: false, error: null });
         this.loadVenues();
+    }
+    onLocationError(error) {
+        this.setState({ latlng: '', waitingForLocation: true, error: error });
     }
 
     onSettingsClick() {
@@ -53,7 +77,7 @@ export default class ResultsScreen extends React.Component {
     onSearchClicked(text) {
         this.setState({ searchStr: text, offset: 0, dataSource: [] }, () => {
             //called when new state gets saved
-            this.loadVenues();
+            this.findLocation();
         })
     }
 
@@ -63,7 +87,6 @@ export default class ResultsScreen extends React.Component {
         let searchStr = this.state.searchStr;
         let radius = this.state.radius;
         let offset = this.state.offset;
-
         const QUERY_MAP = { query: searchStr, ll: latLngStr, radius: radius, offset: offset };
         const URL = HOST + API + '?' + Utils.toQueryString(DEFAULT_QUERY_MAP) + '&' + Utils.toQueryString(QUERY_MAP);
         return fetch(URL)
@@ -124,22 +147,47 @@ export default class ResultsScreen extends React.Component {
     }
     handleLoadMore = () => {
         this.setState({ offset: this.state.dataSource.length }, () => {
-            this.loadVenues();
+            this.findLocation();
         })
     }
     handleRefresh = () => {
         this.setState({ offset: 0, isRefreshing: true, dataSource: [] }, () => {
-            this.loadVenues();
+            this.findLocation();
         })
     }
 
     render() {
-
+        if (this.state.waitingForLocation) {
+            if (this.state.error) {
+                msg = this.state.error.message;
+                return (
+                    <View style={{
+                        flex: 1, flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                        <Text style={{ fontSize: 16, marginTop: 10 }}>{this.state.error.message}</Text>
+                        <Button style={{ marginTop: 10 }} title='Retry' color={Constants.COLOR.PINK_DARK} onPress={() => this.findLocation()} />
+                    </View>
+                )
+            } else {
+                return (
+                    <View style={{
+                        flex: 1, flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                        <ActivityIndicator animating size="large" color={Constants.COLOR.PINK} />
+                        <Text style={{ fontSize: 16, marginTop: 10 }}>Waiting for location...</Text>
+                    </View>
+                )
+            }
+        }
         return (
             <View style={{
                 margin: 10
             }}>
-                <SearchBox onSearchClick={(text) => this.onSearchClicked(text)} />
+                <SearchBox text={this.state.searchStr} onSearchClick={(text) => this.onSearchClicked(text)} />
                 <FlatList
                     style={{
                         marginTop: 10
