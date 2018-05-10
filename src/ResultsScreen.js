@@ -1,12 +1,21 @@
 import React from 'react';
-import { FlatList, View, ActivityIndicator } from 'react-native';
+import { Image, TouchableOpacity, FlatList, View, ActivityIndicator, Alert } from 'react-native';
 import Constants from './Constants'
 import Utils from './util/Utils'
 import VenueCard from './component/VenueCard'
+import SearchBox from './component/SearchBox';
 
 const HOST = 'https://api.foursquare.com/';
 const API = 'v2/venues/explore';
 const DEFAULT_QUERY_MAP = { client_id: 'CM21KZD4QJRUVTSIVPJISFUQSV0FHBKG3TZRLH4M5ZIVSUNX', client_secret: 'AWFDESPDPUG3GXSUOVWTRPRYCNYVXMFBBPHDIODAG5HOYECC', v: '20161018', limit: 10, venuePhotos: 1 };
+
+function renderSettings(params) {
+    return (<View>
+        <TouchableOpacity activeOpacity={.5} onPress={() => params.handleSettingsClick()}>
+            <Image style={{ width: 25, height: 25, padding: 10, margin: 10 }} source={require('../res/img/settings.png')} />
+        </TouchableOpacity>
+    </View>);
+}
 
 export default class ResultsScreen extends React.Component {
     constructor(props) {
@@ -21,18 +30,32 @@ export default class ResultsScreen extends React.Component {
             radius: 10000,//in meters
         }
     }
-    static navigationOptions = {
-        title: 'Home',
-        headerStyle: {
-            backgroundColor: Constants.COLOR.PINK_DARK,
-        },
-        headerTintColor: '#fff',
-        headerTitleStyle: {
-            fontWeight: 'bold'
-        },
-        textAlign: 'center',
-        alignSelf: 'center'
+    static navigationOptions = ({ navigation }) => {
+        const { params } = navigation.state;
+        return {
+            title: 'Home',
+            headerStyle: {
+                backgroundColor: Constants.COLOR.PINK_DARK,
+            },
+            headerTintColor: '#fff',
+            headerRight: renderSettings(params),
+        }
     };
+
+    componentDidMount() {
+        this.props.navigation.setParams({ handleSettingsClick: this.onSettingsClick.bind(this) });
+        this.loadVenues();
+    }
+
+    onSettingsClick() {
+        this.props.navigation.navigate('Settings');
+    }
+    onSearchClicked(text) {
+        this.setState({ searchStr: text, offset: 0, dataSource: [] }, () => {
+            //called when new state gets saved
+            this.loadVenues();
+        })
+    }
 
     loadVenues() {
         this.setState({ isLoading: true });
@@ -70,10 +93,6 @@ export default class ResultsScreen extends React.Component {
                     //callback for setState() because its not executed immediately, called when setState() completed
                 });
             });
-    }
-
-    componentDidMount() {
-        this.loadVenues();
     }
 
     renderSeparator = () => {
@@ -117,29 +136,33 @@ export default class ResultsScreen extends React.Component {
     render() {
 
         return (
-
-            <FlatList style={{
+            <View style={{
                 margin: 10
-            }}
+            }}>
+                <SearchBox onSearchClick={(text) => this.onSearchClicked(text)} />
+                <FlatList
+                    style={{
+                        marginTop: 10
+                    }}
+                    data={this.state.dataSource}
 
-                data={this.state.dataSource}
+                    ItemSeparatorComponent={this.renderSeparator}
 
-                ItemSeparatorComponent={this.renderSeparator}
+                    renderItem={this.renderRow}
 
-                renderItem={this.renderRow}
+                    keyExtractor={item => item.venue.id}
 
-                keyExtractor={item => item.venue.id}
+                    ListFooterComponent={this.renderFooter}
 
-                ListFooterComponent={this.renderFooter}
+                    onEndReached={this.handleLoadMore}
 
-                onEndReached={this.handleLoadMore}
+                    onEndReachedThreshold={0.1}
 
-                onEndReachedThreshold={0.1}
+                    refreshing={this.state.isRefreshing}
 
-                refreshing={this.state.isRefreshing}
-
-                onRefresh={this.handleRefresh}
-            />
+                    onRefresh={this.handleRefresh}
+                />
+            </View>
         );
     }
 }

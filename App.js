@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import ResultsScreen from './src/ResultsScreen';
 import ZoomScreen from './src/ZoomScreen';
+import SettingsScreen from './src/SettingsScreen';
 
 
 const RootStack = StackNavigator(
@@ -12,7 +13,10 @@ const RootStack = StackNavigator(
     },
     Zoom: {
       screen: ZoomScreen,
-    }
+    },
+    Settings: {
+      screen: SettingsScreen
+    },
   },
   {
     initialRouteName: 'Home',
