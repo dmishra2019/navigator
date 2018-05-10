@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, Alert } from 'react-native';
+import { StyleSheet, Text, View, Image, Platform } from 'react-native';
 import Constants from './Constants'
 import SettingsList from 'react-native-settings-list';
 
@@ -50,6 +50,8 @@ export default class SettingsScreen extends React.Component {
                             onPress={() => Alert.alert('Different Colors Example Pressed')} /> */}
                         <SettingsList.Header headerText='About' headerStyle={{ color: 'black', marginTop: 20, fontSize: 17 }} />
                         <SettingsList.Item titleInfo='1.0.0' hasNavArrow={false} title='Version' />
+                        <SettingsList.Item titleInfo={Platform.OS == 'ios' ? 'iPhone' : 'Android'} hasNavArrow={false} title='Platform' />
+                        <SettingsList.Item titleInfo='React-Native' hasNavArrow={false} title='Technology' />
                         <SettingsList.Item titleInfo='Diwakar Mishra' hasNavArrow={false} title='Author' />
                         <SettingsList.Item titleInfo='https://github.com/diwakar1988' hasNavArrow={false} title='FollowMe' />
                         {/* <SettingsList.Item title='Settings 1' />
