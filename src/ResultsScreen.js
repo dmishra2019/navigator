@@ -4,6 +4,7 @@ import Constants from './Constants'
 import Utils from './util/Utils'
 import VenueCard from './component/VenueCard'
 import SearchBox from './component/SearchBox';
+import Geolocation from 'react-native-geolocation-service';
 
 const HOST = 'https://api.foursquare.com/';
 const API = 'v2/venues/explore';
@@ -46,21 +47,14 @@ export default class ResultsScreen extends React.Component {
 
     componentDidMount() {
         this.props.navigation.setParams({ handleSettingsClick: this.onSettingsClick.bind(this) });
-        navigator.geolocation.getCurrentPosition(
-            (position) => this.onLocationAvailable(position),
-            (error) => this.onLocationError(error),
-            { enableHighAccuracy: true, timeout: 20000, maximumAge: 10000 },
-        );
+        this.findLocation();
     }
     findLocation() {
-        this.setState({ waitingForLocation: true, error: null }, () => {
-            navigator.geolocation.getCurrentPosition(
-                (position) => this.onLocationAvailable(position),
-                (error) => this.onLocationError(error),
-                { enableHighAccuracy: true, timeout: 20000, maximumAge: 10000 },
-            );
-
-        });
+        Geolocation.getCurrentPosition(
+            (position) => this.onLocationAvailable(position),
+            (error) => (error) => this.onLocationError(error),
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        );
     }
     onLocationAvailable(position) {
         let loc = position.coords.latitude + "," + position.coords.longitude;

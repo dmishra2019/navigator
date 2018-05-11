@@ -75,10 +75,14 @@ yarn-error.log*
 
 .vscode/
 
+android/.settings
 android/app/build/
+android/app/.settings
+android/app/.classpath
 android/build/
 android/.gradle/
 android/.idea/
 *.iml
+*.project
 
 ios/Build/
