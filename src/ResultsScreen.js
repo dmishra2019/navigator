@@ -8,7 +8,7 @@ import Geolocation from 'react-native-geolocation-service';
 
 const HOST = 'https://api.foursquare.com/';
 const API = 'v2/venues/explore';
-const DEFAULT_QUERY_MAP = { client_id: 'CM21KZD4QJRUVTSIVPJISFUQSV0FHBKG3TZRLH4M5ZIVSUNX', client_secret: 'AWFDESPDPUG3GXSUOVWTRPRYCNYVXMFBBPHDIODAG5HOYECC', v: '20161018', limit: 10, venuePhotos: 1 };
+const DEFAULT_QUERY_MAP = { client_id: 'CM21KZD4QJRUVTSIVPJISFUQSV0FHBKG3TZRLH4M5ZIVSUNX', client_secret: 'AWFDESPDPUG3GXSUOVWTRPRYCNYVXMFBBPHDIODAG5HOYECC', v: '20161018', limit: 20, venuePhotos: 1 };
 
 function renderSettings(params) {
     return (<View>
@@ -58,8 +58,7 @@ export default class ResultsScreen extends React.Component {
     }
     onLocationAvailable(position) {
         let loc = position.coords.latitude + "," + position.coords.longitude;
-        this.setState({ latlng: loc, waitingForLocation: false, error: null });
-        this.loadVenues();
+        this.setState({ latlng: loc, waitingForLocation: false, error: null }, () => this.loadVenues());
     }
     onLocationError(error) {
         this.setState({ latlng: '', waitingForLocation: true, error: error });
@@ -69,7 +68,7 @@ export default class ResultsScreen extends React.Component {
         this.props.navigation.navigate('Settings');
     }
     onSearchClicked(text) {
-        this.setState({ searchStr: text, offset: 0, dataSource: [] }, () => {
+        this.setState({ searchStr: text, offset: 0, dataSource: this.state.dataSource.slice(0) }, () => {
             //called when new state gets saved
             this.findLocation();
         })
@@ -90,14 +89,13 @@ export default class ResultsScreen extends React.Component {
                     this.setState({
                         isLoading: false,
                         isRefreshing: false,
-                        dataSource: [...this.state.dataSource, ...responseJson.response.groups[0].items],
+                        dataSource: this.state.dataSource.concat(responseJson.response.groups[0].items),
                         error: null,
                     }, function () {
                         //callback for setState() because its not executed immediately, called when setState() completed
                     });
                 } else {
                     throw new Error("No results, please modify your search.");
-
                 }
 
             })
@@ -145,7 +143,7 @@ export default class ResultsScreen extends React.Component {
         })
     }
     handleRefresh = () => {
-        this.setState({ offset: 0, isRefreshing: true, dataSource: [] }, () => {
+        this.setState({ offset: 0, isRefreshing: true, dataSource: this.state.dataSource.slice(0) }, () => {
             this.findLocation();
         })
     }
@@ -192,13 +190,13 @@ export default class ResultsScreen extends React.Component {
 
                     renderItem={this.renderRow}
 
-                    keyExtractor={item => item.venue.id}
+                    keyExtractor={(item, index) => JSON.stringify(index)}
 
                     ListFooterComponent={this.renderFooter}
 
                     onEndReached={this.handleLoadMore}
 
-                    onEndReachedThreshold={0.1}
+                    onEndReachedThreshold={5}
 
                     refreshing={this.state.isRefreshing}
 
