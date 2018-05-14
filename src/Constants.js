@@ -6,4 +6,8 @@ export default {
         BLUE: '#2196F3',
         GRAY: '#808080',
     },
+    DEFAULT_SETTINGS: {
+        radius: 10,
+        results: 20,
+    },
 };

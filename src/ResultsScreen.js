@@ -5,10 +5,11 @@ import Utils from './util/Utils'
 import VenueCard from './component/VenueCard'
 import SearchBox from './component/SearchBox';
 import Geolocation from 'react-native-geolocation-service';
+import DataController from './db/DataController';
 
 const HOST = 'https://api.foursquare.com/';
 const API = 'v2/venues/explore';
-const DEFAULT_QUERY_MAP = { client_id: 'CM21KZD4QJRUVTSIVPJISFUQSV0FHBKG3TZRLH4M5ZIVSUNX', client_secret: 'AWFDESPDPUG3GXSUOVWTRPRYCNYVXMFBBPHDIODAG5HOYECC', v: '20161018', limit: 20, venuePhotos: 1 };
+const DEFAULT_QUERY_MAP = { client_id: 'CM21KZD4QJRUVTSIVPJISFUQSV0FHBKG3TZRLH4M5ZIVSUNX', client_secret: 'AWFDESPDPUG3GXSUOVWTRPRYCNYVXMFBBPHDIODAG5HOYECC', v: '20161018', venuePhotos: 1 };
 
 function renderSettings(params) {
     return (<View>
@@ -28,9 +29,10 @@ export default class ResultsScreen extends React.Component {
             offset: 0,
             searchStr: '',
             latlng: '',
-            radius: 10000,//in meters
             waitingForLocation: true,
             error: null,
+            radius: 10,
+            results: 10,
         }
     }
     static navigationOptions = ({ navigation }) => {
@@ -47,6 +49,8 @@ export default class ResultsScreen extends React.Component {
 
     componentDidMount() {
         this.props.navigation.setParams({ handleSettingsClick: this.onSettingsClick.bind(this) });
+        // const settings = await DataController.getSettings();
+        // this.setState({ radius: settings.radius, results: settings.results });
         this.findLocation();
     }
     findLocation() {
@@ -68,28 +72,32 @@ export default class ResultsScreen extends React.Component {
         this.props.navigation.navigate('Settings');
     }
     onSearchClicked(text) {
-        this.setState({ searchStr: text, offset: 0, dataSource: this.state.dataSource.slice(0) }, () => {
+        this.setState({ searchStr: text, offset: 0, isRefreshing: true }, () => {
             //called when new state gets saved
             this.findLocation();
         })
     }
 
-    loadVenues() {
+    async loadVenues() {
         this.setState({ isLoading: true });
+        const settings = await DataController.getSettings();
+        let radius = settings.radius * 1000; //convert into meters
+        let limit = settings.results;
         let latLngStr = this.state.latlng;
         let searchStr = this.state.searchStr;
-        let radius = this.state.radius;
         let offset = this.state.offset;
-        const QUERY_MAP = { query: searchStr, ll: latLngStr, radius: radius, offset: offset };
+
+        const QUERY_MAP = { query: searchStr, ll: latLngStr, radius: radius, limit: limit, offset: offset };
         const URL = HOST + API + '?' + Utils.toQueryString(DEFAULT_QUERY_MAP) + '&' + Utils.toQueryString(QUERY_MAP);
         return fetch(URL)
             .then((response) => response.json())
             .then((responseJson) => {
                 if (responseJson.response.totalResults > 0) {
+                    let items = this.state.isRefreshing ? responseJson.response.groups[0].items : this.state.dataSource.concat(responseJson.response.groups[0].items);
                     this.setState({
                         isLoading: false,
                         isRefreshing: false,
-                        dataSource: this.state.dataSource.concat(responseJson.response.groups[0].items),
+                        dataSource: items,
                         error: null,
                     }, function () {
                         //callback for setState() because its not executed immediately, called when setState() completed
@@ -138,12 +146,16 @@ export default class ResultsScreen extends React.Component {
         );
     }
     handleLoadMore = () => {
+        if (this.state.isRefreshing || this.state.isLoading) {
+            return;
+        }
+        Alert.alert("Loadmore called");
         this.setState({ offset: this.state.dataSource.length }, () => {
             this.findLocation();
         })
     }
     handleRefresh = () => {
-        this.setState({ offset: 0, isRefreshing: true, dataSource: this.state.dataSource.slice(0) }, () => {
+        this.setState({ offset: 0, isRefreshing: true }, () => {
             this.findLocation();
         })
     }
@@ -194,7 +206,7 @@ export default class ResultsScreen extends React.Component {
 
                     ListFooterComponent={this.renderFooter}
 
-                    onEndReached={this.handleLoadMore}
+                    onEndReached={this.handleLoadMore.bind(this)}
 
                     onEndReachedThreshold={5}
 
