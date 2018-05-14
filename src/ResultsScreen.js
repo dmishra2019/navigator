@@ -149,7 +149,6 @@ export default class ResultsScreen extends React.Component {
         if (this.state.isRefreshing || this.state.isLoading) {
             return;
         }
-        Alert.alert("Loadmore called");
         this.setState({ offset: this.state.dataSource.length }, () => {
             this.findLocation();
         })

@@ -4,6 +4,7 @@ import { StackNavigator } from 'react-navigation';
 import ResultsScreen from './src/ResultsScreen';
 import ZoomScreen from './src/ZoomScreen';
 import SettingsScreen from './src/SettingsScreen';
+import VenueDetailScreen from './src/VenueDetailScreen';
 
 
 const RootStack = StackNavigator(
@@ -13,6 +14,9 @@ const RootStack = StackNavigator(
     },
     Zoom: {
       screen: ZoomScreen,
+    },
+    VenueDetail: {
+      screen: VenueDetailScreen,
     },
     Settings: {
       screen: SettingsScreen

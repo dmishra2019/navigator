@@ -67,20 +67,22 @@ export default class VenueCard extends React.Component {
         let tip = this.props.tips && this.props.tips.length > 0 ? this.props.tips[0] : mockTip;
 
         return (
-            <View style={styles.card}>
-                <View style={{ alignSelf: 'stretch', flexDirection: 'row' }}>
-                    <TouchableOpacity activeOpacity={.5} onPress={() => this.openBigImage(this.props.venue)}>
-                        <Image style={styles.image} source={{ uri: this.getVenueThumbnailURL() }}></Image>
-                    </TouchableOpacity>
-                    <View style={{ flex: 1, marginLeft: 7, marginRight: 7 }}>
-                        <Text style={styles.title} ellipsizeMode='tail' numberOfLines={1}>{(this.props.position + 1) + '. ' + venue.name}</Text>
-                        <Text style={styles.contact} ellipsizeMode='tail' numberOfLines={1} onPress={() => this.callNumber(this.getContact())}>{this.getContact()}</Text>
-                        <Text style={styles.address} ellipsizeMode='tail' numberOfLines={3}>{this.getFullAddress()}</Text>
+            <TouchableOpacity activeOpacity={.5} onPress={() => this.props.navigation.navigate('VenueDetail', { venue: this.props.venue })}>
+                <View style={styles.card}>
+                    <View style={{ alignSelf: 'stretch', flexDirection: 'row' }}>
+                        <TouchableOpacity activeOpacity={.5} onPress={() => this.openBigImage(this.props.venue)}>
+                            <Image style={styles.image} source={{ uri: this.getVenueThumbnailURL() }}></Image>
+                        </TouchableOpacity>
+                        <View style={{ flex: 1, marginLeft: 7, marginRight: 7 }}>
+                            <Text style={styles.title} ellipsizeMode='tail' numberOfLines={1}>{(this.props.position + 1) + '. ' + venue.name}</Text>
+                            <Text style={styles.contact} ellipsizeMode='tail' numberOfLines={1} onPress={() => this.callNumber(this.getContact())}>{this.getContact()}</Text>
+                            <Text style={styles.address} ellipsizeMode='tail' numberOfLines={3}>{this.getFullAddress()}</Text>
+                        </View>
+                        <Text style={[styles.rating, { backgroundColor: this.getRatingColor() }]} ellipsizeMode='tail' numberOfLines={1}>{!venue.rating ? '0' : venue.rating}</Text>
                     </View>
-                    <Text style={[styles.rating, { backgroundColor: this.getRatingColor() }]} ellipsizeMode='tail' numberOfLines={1}>{!venue.rating ? '0' : venue.rating}</Text>
-                </View>
-                <Text style={styles.tip} ellipsizeMode='tail' numberOfLines={2}>{(!tip) ? ' ' : 'TIP: ' + tip.text}</Text>
-            </View >
+                    <Text style={styles.tip} ellipsizeMode='tail' numberOfLines={2}>{(!tip) ? ' ' : 'TIP: ' + tip.text}</Text>
+                </View >
+            </TouchableOpacity>
         );
     }
 }
