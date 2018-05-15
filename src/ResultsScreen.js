@@ -7,10 +7,6 @@ import SearchBox from './component/SearchBox';
 import Geolocation from 'react-native-geolocation-service';
 import DataController from './db/DataController';
 
-const HOST = 'https://api.foursquare.com/';
-const API = 'v2/venues/explore';
-const DEFAULT_QUERY_MAP = { client_id: 'CM21KZD4QJRUVTSIVPJISFUQSV0FHBKG3TZRLH4M5ZIVSUNX', client_secret: 'AWFDESPDPUG3GXSUOVWTRPRYCNYVXMFBBPHDIODAG5HOYECC', v: '20161018', venuePhotos: 1 };
-
 function renderSettings(params) {
     return (<View>
         <TouchableOpacity activeOpacity={.5} onPress={() => params.handleSettingsClick()}>
@@ -88,7 +84,7 @@ export default class ResultsScreen extends React.Component {
         let offset = this.state.offset;
 
         const QUERY_MAP = { query: searchStr, ll: latLngStr, radius: radius, limit: limit, offset: offset };
-        const URL = HOST + API + '?' + Utils.toQueryString(DEFAULT_QUERY_MAP) + '&' + Utils.toQueryString(QUERY_MAP);
+        const URL = Constants.HOST + Constants.API_VENUE + '?' + Utils.toQueryString(Constants.DEFAULT_QUERY_MAP) + '&' + Utils.toQueryString(QUERY_MAP);
         return fetch(URL)
             .then((response) => response.json())
             .then((responseJson) => {
