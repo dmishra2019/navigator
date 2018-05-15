@@ -1,6 +1,7 @@
 import React from 'react';
 import { Dimensions, Text, View, StyleSheet, Image, Alert, Linking, TouchableOpacity } from 'react-native';
 import call from 'react-native-phone-call'
+import Constants from '../Constants';
 
 const no_contact = 'No Contact';
 const fake_url = "http://"
@@ -59,6 +60,13 @@ export default class VenueCard extends React.Component {
         let url = photo.prefix + Math.round(dim.width) + 'x' + Math.round(dim.height) + photo.suffix;
         this.props.navigation.navigate('Zoom', { title: venue.name, image: url });
     }
+    getDistance() {
+        let distance = this.props.venue.location.distance;
+        if (distance < 1000) {
+            return distance + ' Meters away';
+        }
+        return ((distance / 1000).toFixed(2)) + ' Kms away';
+    }
     render() {
         let venue = this.props.venue;
         const mockTip = {
@@ -80,7 +88,11 @@ export default class VenueCard extends React.Component {
                         </View>
                         <Text style={[styles.rating, { backgroundColor: this.getRatingColor() }]} ellipsizeMode='tail' numberOfLines={1}>{!venue.rating ? '0' : venue.rating}</Text>
                     </View>
-                    <Text style={styles.tip} ellipsizeMode='tail' numberOfLines={2}>{(!tip) ? ' ' : 'TIP: ' + tip.text}</Text>
+                    <View style={{ alignSelf: 'stretch', flexDirection: 'row', marginTop: 5 }}>
+                        <Text style={{ flex: 1, textAlign: 'left', fontSize: 14, color: '#8C8C8C' }} >{this.getDistance()}</Text>
+                        <Text style={{ flex: 1, textAlign: 'right', fontSize: 14, color: this.props.venue.hours.isOpen ? Constants.COLOR.GREEN : Constants.COLOR.RED }}>{this.props.venue.hours.isOpen ? 'OPEN' : 'CLOSED'}</Text>
+                    </View>
+                    <Text style={styles.tip} ellipsizeMode='tail' numberOfLines={2}>{(!tip) ? ' ' : tip.text}</Text>
                 </View >
             </TouchableOpacity>
         );
