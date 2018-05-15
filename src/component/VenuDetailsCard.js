@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, Text, View, StyleSheet, Image, Alert, Linking, TouchableOpacity } from 'react-native';
+import { Dimensions, Text, View, StyleSheet, Image, Alert, Linking, TouchableOpacity, Platform } from 'react-native';
 import call from 'react-native-phone-call'
 import Constants from '../Constants';
 import TextIcon from './TextIcon'
@@ -54,7 +54,12 @@ export default class VenueDetailsCard extends React.Component {
         return ((distance / 1000).toFixed(2)) + ' Kms away';
     }
     openDirections() {
-        Alert.alert('openDirections');
+        let loc = this.props.venue.location;
+        let scheme = Platform.OS === 'ios' ? 'maps:0,0?q=' : 'geo:0,0?q=:';
+        let latLng = loc.lat + ',' + loc.lng;
+        let label = this.props.venue.name;
+        let url = Platform.OS === 'ios' ? `${scheme}${label}@${latLng}` : `${scheme}${latLng}(${label})`;
+        Linking.openURL(url);
     }
     markFavorite() {
         Alert.alert('markFavorite');
