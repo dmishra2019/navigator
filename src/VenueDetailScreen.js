@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Dimensions, View, Text, Alert, ScrollView, Image } from 'react-native';
+import { StyleSheet, Dimensions, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from 'react-native';
 import Constants from './Constants'
 import VenueDetailsCard from './component/VenuDetailsCard'
 import TipCard from './component/TipsCard'
@@ -46,7 +46,7 @@ export default class VenueDetailScreen extends React.Component {
             .then((response) => response.json())
             .then((responseJson) => {
                 if (responseJson.response.photos.count > 0) {
-                    this.setState({ isLoadingPhotos: false, photos: this.createPhotosArray(responseJson.response.photos.items), error: null });
+                    this.setState({ isLoadingPhotos: false, photos: responseJson.response.photos.items, error: null });
                 } else {
                     throw new Error("No results, please modify your search.");
                 }
@@ -56,15 +56,7 @@ export default class VenueDetailScreen extends React.Component {
                 this.setState({ isLoadingPhotos: false, photos: [], error: error, });
             });
     }
-    createPhotosArray(items) {
-        var photos = [];
-        // Alert.alert(JSON.stringify(items[0].prefix));
-        for (let item of items) {
-            var url = item.prefix + PIC_WIDTH + 'x' + PIC_HEIGHT + item.suffix;
-            photos.push(url);
-        }
-        return photos;
-    }
+
     async loadTips() {
         this.setState({ isLoadingTips: true });
         const settings = await DataController.getSettings();
@@ -93,13 +85,23 @@ export default class VenueDetailScreen extends React.Component {
             <ScrollView>
                 <View>
                     {renderIf(this.state.photos.length > 0)(
-                        <Image source={{ uri: this.state.photos.length > 0 ? this.state.photos[1] : 'http://' }} style={styles.picsPager} />
+                        <FlatList
+                            data={this.state.photos}
+                            ItemSeparatorComponent={() => this.renderSeprator()}
+                            renderItem={({ item, index }) => this.renderPhoto(item, index)}
+                            keyExtractor={(item, index) => JSON.stringify(index)}
+                            horizontal={true}
+                        />
                     )}
                     <VenueDetailsCard venue={state.params.venue} />
                     {renderIf(this.state.tips.length > 0)(
                         <View>
-                            <Text style={{ marginLeft: 10, fontWeight: 'bold' }}>Customer Voice</Text>
-                            <TipCard navigation={this.props.navigation} tip={this.state.tips[0]} />
+                            <Text style={{ marginLeft: 10, marginBottom: 10, fontWeight: 'bold' }}>Customer Voice</Text>
+                            <FlatList
+                                data={this.state.tips}
+                                renderItem={({ item }) => <TipCard navigation={this.props.navigation} tip={item} />}
+                                keyExtractor={(item, index) => JSON.stringify(index)}
+                            />
                         </View>
                     )}
                 </View>
@@ -107,22 +109,26 @@ export default class VenueDetailScreen extends React.Component {
 
         )
     }
-    renderPhoto(url, pageId) {
+    openBigImage(item) {
+        let dim = Dimensions.get('window');
+        let url = item.prefix + Math.round(dim.width) + 'x' + Math.round(dim.height) + item.suffix
+        // const { state } = this.props.navigation;
+        this.props.navigation.navigate('Zoom', { title: item.source.name, image: url });
+    }
+    renderPhoto(item, index) {
         return (
-            <Image
-                source={{ uri: url }}
-                style={styles.picsPager} />
+            <TouchableOpacity activeOpacity={.5} onPress={() => this.openBigImage(item)}>
+                <Image source={{ uri: item.prefix + PIC_WIDTH + 'x' + PIC_HEIGHT + item.suffix }} style={styles.picsPager} />
+            </TouchableOpacity>
         );
+    }
+    renderSeprator() {
+        return (<View style={{ width: 5 }} />);
     }
 }
 const styles = StyleSheet.create({
     picsPager: {
         width: PIC_WIDTH, height: PIC_HEIGHT
     },
-    detailsCard: {
 
-    },
-    tipsPager: {
-
-    }
 });
