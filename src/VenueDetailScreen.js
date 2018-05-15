@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Dimensions, View, Text } from 'react-native';
 import Constants from './Constants'
+import VenueDetailsCard from './component/VenuDetailsCard'
 
 export default class VenueDetailScreen extends React.Component {
 
@@ -25,7 +26,7 @@ export default class VenueDetailScreen extends React.Component {
         const { state } = this.props.navigation;
         return (
             <View>
-                <Text>{JSON.stringify(state.params.venue)}</Text>
+                <VenueDetailsCard venue={state.params.venue} />
             </View>
 
         )

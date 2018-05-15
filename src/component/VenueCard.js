@@ -83,7 +83,9 @@ export default class VenueCard extends React.Component {
                         </TouchableOpacity>
                         <View style={{ flex: 1, marginLeft: 7, marginRight: 7 }}>
                             <Text style={styles.title} ellipsizeMode='tail' numberOfLines={1}>{(this.props.position + 1) + '. ' + venue.name}</Text>
-                            <Text style={styles.contact} ellipsizeMode='tail' numberOfLines={1} onPress={() => this.callNumber(this.getContact())}>{this.getContact()}</Text>
+                            <TouchableOpacity activeOpacity={.5} onPress={() => this.callNumber(this.getContact())}>
+                                <Text style={styles.contact} ellipsizeMode='tail' numberOfLines={1}>{this.getContact()}</Text>
+                            </TouchableOpacity>
                             <Text style={styles.address} ellipsizeMode='tail' numberOfLines={3}>{this.getFullAddress()}</Text>
                         </View>
                         <Text style={[styles.rating, { backgroundColor: this.getRatingColor() }]} ellipsizeMode='tail' numberOfLines={1}>{!venue.rating ? '0' : venue.rating}</Text>
