@@ -70,6 +70,12 @@ export default class VenueCard extends React.Component {
     }
     render() {
         let venue = this.props.venue;
+        let isOpen = 0;
+        if (venue.hours) {
+            isOpen = venue.hours.isOpen ? 1 : 0;
+        } else {
+            isOpen = 2;//unknown
+        }
         const mockTip = {
             text: 'Navigator: There are no reviews for this place.'
         }
@@ -100,7 +106,9 @@ export default class VenueCard extends React.Component {
                     </View>
                     <View style={{ alignSelf: 'stretch', flexDirection: 'row', marginTop: 5 }}>
                         <Text style={{ flex: 1, textAlign: 'left', fontSize: 14, color: '#8C8C8C' }} >{this.getDistance()}</Text>
-                        <Text style={{ flex: 1, textAlign: 'right', fontSize: 14, color: this.props.venue.hours.isOpen ? Constants.COLOR.GREEN : Constants.COLOR.RED }}>{this.props.venue.hours.isOpen ? 'OPEN' : 'CLOSED'}</Text>
+                        {renderIf(isOpen != 2)(
+                            <Text style={{ flex: 1, textAlign: 'right', fontSize: 14, color: isOpen ? Constants.COLOR.GREEN : Constants.COLOR.RED }}>{isOpen ? 'OPEN' : 'CLOSED'}</Text>
+                        )}
                     </View>
                     <Text style={styles.tip} ellipsizeMode='tail' numberOfLines={2}>{(!tip) ? ' ' : tip.text}</Text>
                 </View >
