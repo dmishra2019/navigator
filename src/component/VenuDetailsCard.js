@@ -1,8 +1,9 @@
 import React from 'react';
-import { Dimensions, Text, View, StyleSheet, Image, Alert, Linking, TouchableOpacity, Platform } from 'react-native';
+import { Dimensions, Text, View, StyleSheet, Image, Alert, Linking, Share, ToastAndroid, TouchableOpacity, Platform } from 'react-native';
 import call from 'react-native-phone-call'
 import Constants from '../Constants';
 import TextIcon from './TextIcon'
+import DataController from '../db/DataController'
 
 const no_contact = 'No Contact';
 
@@ -61,11 +62,28 @@ export default class VenueDetailsCard extends React.Component {
         let url = Platform.OS === 'ios' ? `${scheme}${label}@${latLng}` : `${scheme}${latLng}(${label})`;
         Linking.openURL(url);
     }
-    markFavorite() {
-        Alert.alert('markFavorite');
+    async markFavorite() {
+        let arr = await DataController.getFavoriteVenues();
+        let success = await DataController.addFavoriteVenue(this.props.venue);
+        let msg = success ? '"' + this.props.venue.name + '" marked as favorite!' : 'Error while adding favorite. Please try again.';
+        if (Platform.OS === 'ios') {
+            Alert.alert(msg);
+        } else {
+            ToastAndroid.show(msg, ToastAndroid.SHORT);
+        }
     }
     share() {
-        Alert.alert('share');
+        Share.share({
+            message: 'Hey checkout this place!',
+            title: this.props.venue.name,
+            url: this.props.venue.canonicalUrl,
+        }, {
+                dialogTitle: 'Share Via',
+                tintColor: Constants.COLOR.PINK,
+            })
+            .then(this._showResult)
+            .catch(err => console.log(err))
+        let url = this.props.venue.canonicalUrl;
     }
     render() {
         let venue = this.props.venue;
