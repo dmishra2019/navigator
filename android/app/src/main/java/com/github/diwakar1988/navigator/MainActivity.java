@@ -1,4 +1,4 @@
-package com.junket;
+package com.github.diwakar1988.navigator;
 
 import com.facebook.react.ReactActivity;
 
@@ -10,6 +10,6 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     protected String getMainComponentName() {
-        return "junket";
+        return "navigator";
     }
 }

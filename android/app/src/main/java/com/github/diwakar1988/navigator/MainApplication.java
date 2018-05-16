@@ -1,4 +1,4 @@
-package com.junket;
+package com.github.diwakar1988.navigator;
 
 import android.app.Application;
 

@@ -84,7 +84,7 @@ export default class VenueDetailsCard extends React.Component {
     render() {
         let venue = this.props.venue;
         const mockTip = {
-            text: 'Junket: There are no reviews for this place.'
+            text: 'Navigator: There are no reviews for this place.'
         }
         let tip = this.props.tips && this.props.tips.length > 0 ? this.props.tips[0] : mockTip;
 

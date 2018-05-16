@@ -1,7 +1,7 @@
 import { Alert, AsyncStorage } from 'react-native';
 import Constants from '../Constants';
 
-const DB_NAME = '@dbJunket:';
+const DB_NAME = '@dbNavigator:';
 const KEY_SETTINGS = DB_NAME + 'key_settings'
 const KEY_FAVORITES = DB_NAME + 'key_favorites'
 const TAG = 'DataController'
