@@ -85,18 +85,22 @@ export default class VenueDetailScreen extends React.Component {
             <ScrollView>
                 <View>
                     {renderIf(this.state.photos.length > 0)(
-                        <FlatList
-                            data={this.state.photos}
-                            ItemSeparatorComponent={() => this.renderSeprator()}
-                            renderItem={({ item, index }) => this.renderPhoto(item, index)}
-                            keyExtractor={(item, index) => JSON.stringify(index)}
-                            horizontal={true}
-                        />
+                        <View>
+                            <FlatList
+                                data={this.state.photos}
+                                ItemSeparatorComponent={() => this.renderSeprator()}
+                                renderItem={({ item, index }) => this.renderPhoto(item, index)}
+                                keyExtractor={(item, index) => JSON.stringify(index)}
+                                horizontal={true}
+                            />
+                            <Text style={{ width: PIC_WIDTH, textAlign: 'center', padding: 3, position: 'absolute', bottom: 0, right: 0, backgroundColor: 'rgba(00, 00, 00, 0.5)', color: '#FFFFFF' }}>{this.state.photos.length + ' Pics, Swipe left right to view'}</Text>
+
+                        </View>
                     )}
                     <VenueDetailsCard venue={state.params.venue} tip={this.state.tips.length > 0 ? this.state.tips[0] : null} />
                     {renderIf(this.state.tips.length > 0)(
                         <View>
-                            <Text style={{ marginLeft: 10, marginBottom: 10, fontWeight: 'bold' }}>Customer Voice</Text>
+                            <Text style={{ marginLeft: 10, marginBottom: 10, fontWeight: 'bold' }}>Customer Voice ({this.state.tips.length})</Text>
                             <FlatList
                                 data={this.state.tips}
                                 renderItem={({ item }) => <TipCard navigation={this.props.navigation} tip={item} />}
