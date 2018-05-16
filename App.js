@@ -5,6 +5,7 @@ import ResultsScreen from './src/ResultsScreen';
 import ZoomScreen from './src/ZoomScreen';
 import SettingsScreen from './src/SettingsScreen';
 import VenueDetailScreen from './src/VenueDetailScreen';
+import FavoriteVenuesScreen from './src/FavoriteVenuesScreen';
 
 
 const RootStack = StackNavigator(
@@ -17,6 +18,9 @@ const RootStack = StackNavigator(
     },
     VenueDetail: {
       screen: VenueDetailScreen,
+    },
+    Favorites: {
+      screen: FavoriteVenuesScreen
     },
     Settings: {
       screen: SettingsScreen

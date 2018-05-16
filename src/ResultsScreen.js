@@ -8,7 +8,10 @@ import Geolocation from 'react-native-geolocation-service';
 import DataController from './db/DataController';
 
 function renderSettings(params) {
-    return (<View>
+    return (<View style={{ flexDirection: 'row' }}>
+        <TouchableOpacity activeOpacity={.5} onPress={() => params.handleFavoritesClick()}>
+            <Image style={{ width: 25, height: 25, padding: 10, marginTop: 10, marginBottom: 10 }} source={require('../res/img/favorite_white.png')} />
+        </TouchableOpacity>
         <TouchableOpacity activeOpacity={.5} onPress={() => params.handleSettingsClick()}>
             <Image style={{ width: 25, height: 25, padding: 10, margin: 10 }} source={require('../res/img/settings.png')} />
         </TouchableOpacity>
@@ -44,7 +47,7 @@ export default class ResultsScreen extends React.Component {
     };
 
     componentDidMount() {
-        this.props.navigation.setParams({ handleSettingsClick: this.onSettingsClick.bind(this) });
+        this.props.navigation.setParams({ handleFavoritesClick: this.onFavoritesClick.bind(this), handleSettingsClick: this.onSettingsClick.bind(this) });
         // const settings = await DataController.getSettings();
         // this.setState({ radius: settings.radius, results: settings.results });
         this.findLocation();
@@ -64,6 +67,9 @@ export default class ResultsScreen extends React.Component {
         this.setState({ latlng: '', waitingForLocation: true, error: error });
     }
 
+    onFavoritesClick() {
+        this.props.navigation.navigate('Favorites');
+    }
     onSettingsClick() {
         this.props.navigation.navigate('Settings');
     }

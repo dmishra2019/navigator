@@ -93,7 +93,7 @@ export default class VenueDetailScreen extends React.Component {
                             horizontal={true}
                         />
                     )}
-                    <VenueDetailsCard venue={state.params.venue} />
+                    <VenueDetailsCard venue={state.params.venue} tip={this.state.tips.length > 0 ? this.state.tips[0] : null} />
                     {renderIf(this.state.tips.length > 0)(
                         <View>
                             <Text style={{ marginLeft: 10, marginBottom: 10, fontWeight: 'bold' }}>Customer Voice</Text>

@@ -15,27 +15,43 @@ export default class DataController {
         }
     }
     static async getSettings() {
-        let value = Constants.DEFAULT_SETTINGS;
+        let value = '';
         try {
-            value = JSON.parse(await AsyncStorage.getItem(KEY_SETTINGS));
+            let str = await AsyncStorage.getItem(KEY_SETTINGS);
+            value = JSON.parse(str);
+            if (!velue) {
+                value = Constants.DEFAULT_SETTINGS;
+            }
         } catch (error) {
-            console.error(TAG, error);
+            value = Constants.DEFAULT_SETTINGS;
+            // console.error(TAG, error);
         }
         return value;
     }
-    static async addFavoriteVenue(venue) {
+    static async addFavoriteVenue(venueTipWrapper) {
         let success = true;
         try {
             let arr = await this.getFavoriteVenues();
             if (!arr || arr.length == 0) {
                 arr = [];
             }
-            arr.push(venue);
-            await AsyncStorage.setItem(KEY_FAVORITES, JSON.stringify(arr));
+            if (!this.inFavorites(venueTipWrapper.venue.id)) {
+                arr.push(venueTipWrapper);
+                await AsyncStorage.setItem(KEY_FAVORITES, JSON.stringify(arr));
+            }
         } catch (error) {
             success = false;
         }
         return success;
+    }
+    static async inFavorites(venueId) {
+        let arr = await this.getFavoriteVenues();
+        for (let wrapper of arr) {
+            if (wrapper.venue.id === venueId) {
+                return true;
+            }
+        }
+        return false;
     }
     static async getFavoriteVenues() {
         let arr = [];

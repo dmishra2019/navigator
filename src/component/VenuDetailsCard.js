@@ -63,8 +63,7 @@ export default class VenueDetailsCard extends React.Component {
         Linking.openURL(url);
     }
     async markFavorite() {
-        let arr = await DataController.getFavoriteVenues();
-        let success = await DataController.addFavoriteVenue(this.props.venue);
+        let success = await DataController.addFavoriteVenue({ venue: this.props.venue, tip: this.props.tip });
         let msg = success ? '"' + this.props.venue.name + '" marked as favorite!' : 'Error while adding favorite. Please try again.';
         if (Platform.OS === 'ios') {
             Alert.alert(msg);
