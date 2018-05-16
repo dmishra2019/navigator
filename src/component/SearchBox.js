@@ -22,7 +22,7 @@ export default class SearchBox extends React.Component {
             <View style={styles.container}>
                 {renderIf(this.state.showDelete)(
                     <TouchableOpacity activeOpacity={.5} onPress={() => this.setState({ text: '', showDelete: false })}>
-                        <Image style={{ width: 20, height: 20, marginRight: 5 }} source={require('../../res/img/delete.png')} />
+                        <Image style={{ width: 20, height: 20, marginRight: 5 }} source={require('../../res/img/cancel.png')} />
                     </TouchableOpacity>
                 )}
                 <TextInput
