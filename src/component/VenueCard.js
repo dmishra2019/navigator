@@ -2,6 +2,7 @@ import React from 'react';
 import { Dimensions, Text, View, StyleSheet, Image, Alert, Linking, TouchableOpacity } from 'react-native';
 import call from 'react-native-phone-call'
 import Constants from '../Constants';
+import renderIf from '../renderIf'
 
 const no_contact = 'No Contact';
 const fake_url = "http://"
@@ -88,7 +89,14 @@ export default class VenueCard extends React.Component {
                             </TouchableOpacity>
                             <Text style={styles.address} ellipsizeMode='tail' numberOfLines={3}>{this.getFullAddress()}</Text>
                         </View>
-                        <Text style={[styles.rating, { backgroundColor: this.getRatingColor() }]} ellipsizeMode='tail' numberOfLines={1}>{!venue.rating ? '0' : venue.rating}</Text>
+                        {renderIf(this.props.showDelete)(
+                            <TouchableOpacity activeOpacity={.5} onPress={() => this.props.onDeleteClick()}>
+                                <Image style={{ width: 30, height: 30 }} source={require('../../res/img/delete.png')} />
+                            </TouchableOpacity>
+                        )}
+                        {renderIf(!this.props.showDelete)(
+                            <Text style={[styles.rating, { backgroundColor: this.getRatingColor() }]} ellipsizeMode='tail' numberOfLines={1}>{!venue.rating ? '0' : venue.rating}</Text>
+                        )}
                     </View>
                     <View style={{ alignSelf: 'stretch', flexDirection: 'row', marginTop: 5 }}>
                         <Text style={{ flex: 1, textAlign: 'left', fontSize: 14, color: '#8C8C8C' }} >{this.getDistance()}</Text>

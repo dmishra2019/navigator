@@ -1,9 +1,10 @@
 import React from 'react';
-import { Dimensions, Text, View, StyleSheet, Image, Alert, Linking, Share, ToastAndroid, TouchableOpacity, Platform } from 'react-native';
+import { Dimensions, Text, View, StyleSheet, Image, Alert, Linking, Share, TouchableOpacity, Platform } from 'react-native';
 import call from 'react-native-phone-call'
 import Constants from '../Constants';
 import TextIcon from './TextIcon'
 import DataController from '../db/DataController'
+import Utils from '../util/Utils'
 
 const no_contact = 'No Contact';
 
@@ -65,11 +66,7 @@ export default class VenueDetailsCard extends React.Component {
     async markFavorite() {
         let success = await DataController.addFavoriteVenue({ venue: this.props.venue, tip: this.props.tip });
         let msg = success ? '"' + this.props.venue.name + '" marked as favorite!' : 'Error while adding favorite. Please try again.';
-        if (Platform.OS === 'ios') {
-            Alert.alert(msg);
-        } else {
-            ToastAndroid.show(msg, ToastAndroid.SHORT);
-        }
+        Utils.showMessage(msg);
     }
     share() {
         Share.share({

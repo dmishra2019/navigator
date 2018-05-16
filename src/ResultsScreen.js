@@ -130,7 +130,7 @@ export default class ResultsScreen extends React.Component {
         );
     };
     renderRow = ({ item, index }) => {
-        return <VenueCard position={index} venue={item.venue} tips={item.tips} navigation={this.props.navigation} />
+        return <VenueCard position={index} venue={item.venue} tips={item.tips} navigation={this.props.navigation} showDelete={false} />
     }
     renderFooter = () => {
         if (!this.state.isLoading) return null;

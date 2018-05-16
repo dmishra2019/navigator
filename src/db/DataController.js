@@ -35,7 +35,7 @@ export default class DataController {
             if (!arr || arr.length == 0) {
                 arr = [];
             }
-            if (!this.inFavorites(venueTipWrapper.venue.id)) {
+            if (!await this.inFavorites(venueTipWrapper.venue.id)) {
                 arr.push(venueTipWrapper);
                 await AsyncStorage.setItem(KEY_FAVORITES, JSON.stringify(arr));
             }
@@ -46,6 +46,9 @@ export default class DataController {
     }
     static async inFavorites(venueId) {
         let arr = await this.getFavoriteVenues();
+        if (!arr || arr.length == 0) {
+            return false;
+        }
         for (let wrapper of arr) {
             if (wrapper.venue.id === venueId) {
                 return true;
@@ -61,5 +64,16 @@ export default class DataController {
             console.error(TAG, error);
         }
         return arr;
+    }
+    static async removeFavoriteVenue(index) {
+        let success = true;
+        let arr = await this.getFavoriteVenues();
+        arr.splice(index, 1);
+        try {
+            await AsyncStorage.setItem(KEY_FAVORITES, JSON.stringify(arr));
+        } catch (error) {
+            success = false;
+        }
+        return success;
     }
 }
