@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, TouchableOpacity, FlatList, View, ActivityIndicator, Alert, Text, Button } from 'react-native';
+import { Image, TouchableOpacity, FlatList, View, ActivityIndicator, PermissionsAndroid, Text, Button } from 'react-native';
 import Constants from './Constants'
 import Utils from './util/Utils'
 import VenueCard from './component/VenueCard'
@@ -52,12 +52,37 @@ export default class ResultsScreen extends React.Component {
         // this.setState({ radius: settings.radius, results: settings.results });
         this.findLocation();
     }
-    findLocation() {
-        Geolocation.getCurrentPosition(
-            (position) => this.onLocationAvailable(position),
-            (error) => (error) => this.onLocationError(error),
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-        );
+    async findLocation() {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                    'title': 'Location Access',
+                    'message': 'Navigator needs access to your location in order to provide more relavant results.'
+                }
+            )
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                Geolocation.getCurrentPosition(
+                    (position) => this.onLocationAvailable(position),
+                    (error) => (error) => this.onLocationError(error),
+                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                );
+            } else {
+                this.setState({
+                    isLoading: false,
+                    isRefreshing: false,
+                    error: new Error('Location permission denied, Navigator needs access to your GPS to provide results.'),
+                });
+
+            }
+        } catch (err) {
+            this.setState({
+                isLoading: false,
+                isRefreshing: false,
+                error: err,
+            });
+        }
+
     }
     onLocationAvailable(position) {
         let loc = position.coords.latitude + "," + position.coords.longitude;
@@ -172,10 +197,11 @@ export default class ResultsScreen extends React.Component {
                     <View style={{
                         flex: 1, flexDirection: 'column',
                         justifyContent: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
+                        margin: 20
                     }}>
-                        <Text style={{ fontSize: 16, marginTop: 10 }}>{this.state.error.message}</Text>
-                        <Button style={{ marginTop: 10 }} title='Retry' color={Constants.COLOR.PINK_DARK} onPress={() => this.findLocation()} />
+                        <Text style={{ fontSize: 18, marginBottom: 10, textAlign: 'center' }}>{this.state.error.message}</Text>
+                        <Button title='Retry' color={Constants.COLOR.PINK_DARK} onPress={() => this.findLocation()} />
                     </View>
                 )
             } else {
