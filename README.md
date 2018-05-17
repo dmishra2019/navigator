@@ -1,6 +1,6 @@
-NAVIGATOR shows a list of venues nearby your selected location.
-App is developed using React-Native and Supports Android 4.1 and above.
-This application is using FOURSQUARE API server as backend.
+<a href='https://github.com/Diwakar1988/junket-react/blob/master/downloads/navigator-1.0.0.apk'>DOWNLOAD APK</a>
+<BR><BR>NAVIGATOR shows a list of venues nearby your selected location.
+<BR>App is developed using React-Native and Supports Android 4.1 and above. This application is using FOURSQUARE API server as backend.
 
 
 Top Features:
