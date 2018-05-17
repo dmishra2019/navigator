@@ -7,7 +7,7 @@ import DataController from './db/DataController';
 import Utils from './util/Utils'
 import renderIf from './renderIf'
 
-const PIC_WIDTH = Dimensions.get('window').width;
+const PIC_WIDTH = Math.round(Dimensions.get('window').width);
 const PIC_HEIGHT = 200;
 export default class VenueDetailScreen extends React.Component {
 

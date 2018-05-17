@@ -74,6 +74,9 @@ export default class ResultsScreen extends React.Component {
         this.props.navigation.navigate('Settings');
     }
     onSearchClicked(text) {
+        if (text == "") {
+            return;
+        }
         this.setState({ searchStr: text, offset: 0, isRefreshing: true }, () => {
             //called when new state gets saved
             this.findLocation();

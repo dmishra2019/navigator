@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Dimensions, Image, Easing } from 'react-native';
 import ZoomImage from 'react-native-zoom-image';
+import Constants from './Constants'
 
 export default class ZoomScreen extends React.Component {
 
@@ -9,7 +10,7 @@ export default class ZoomScreen extends React.Component {
         return {
             title: `${state.params.title}`,
             headerStyle: {
-                backgroundColor: '#000000',
+                backgroundColor: Constants.COLOR.PINK_DARK,
             },
             headerTintColor: '#fff',
         };

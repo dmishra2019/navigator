@@ -32,7 +32,7 @@ export default class SearchBox extends React.Component {
                     placeholder='Type and tap search...'
                     underlineColorAndroid='transparent'
                 />
-                <TouchableOpacity activeOpacity={.5} onPress={() => this.props.onSearchClick(this.state.text)}>
+                <TouchableOpacity activeOpacity={.5} onPress={() => this.props.onSearchClick(this.state.text.trim)}>
                     <Image style={{ width: 20, height: 20, marginLeft: 5 }} source={require('../../res/img/search.png')} />
                 </TouchableOpacity>
             </View>
