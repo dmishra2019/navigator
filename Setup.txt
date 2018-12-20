@@ -1,0 +1,40 @@
+Setup:
+
+Install Home brew on MAC
+	/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+Install node/npm
+	NEW: brew install node
+	UPDATE: npm install -g npm
+	Verify with commands: 
+		node --v
+		npm --v
+
+
+Install watchman
+	brew install watchman
+	Verify with commands: 
+		watchman -v
+
+Install react native
+	npm install
+	Verify with commands: 
+		react-native -v
+	
+Install react native command line tools (CLI)
+	npm install -g react-native-cli
+
+Fix Vulnerabilities
+	npm audit fix
+
+Create New Project:
+	react-native init <project_name>
+	
+SETUP IOS
+	1. Download xcode
+	2. Enable cli tools: xCode>Preferences>Location
+	3. Run App on IOS Simulator:	<Your Project>/react-native run-ios
+	4. Make changes and Hit CMD+R to reload changes
+
+SETUP Android
+	1. 

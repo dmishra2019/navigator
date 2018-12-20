@@ -86,3 +86,4 @@ android/.idea/
 *.project
 
 ios/Build/
+package-lock.json

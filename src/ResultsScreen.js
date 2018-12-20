@@ -119,6 +119,7 @@ export default class ResultsScreen extends React.Component {
 
         const QUERY_MAP = { query: searchStr, ll: latLngStr, radius: radius, limit: limit, offset: offset };
         const URL = Constants.HOST + Constants.API_VENUE + '?' + Utils.toQueryString(Constants.DEFAULT_QUERY_MAP) + '&' + Utils.toQueryString(QUERY_MAP);
+        console.log("URL: "+URL)
         return fetch(URL)
             .then((response) => response.json())
             .then((responseJson) => {
