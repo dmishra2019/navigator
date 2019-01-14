@@ -24,6 +24,10 @@ Install react native
 Install react native command line tools (CLI)
 	npm install -g react-native-cli
 
+Install YARN
+	npm install -g yarn
+	yarn global add react-native-cli
+	
 Fix Vulnerabilities
 	npm audit fix
 
